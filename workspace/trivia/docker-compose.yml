@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  fyyur:
+    build:
+      context: ${PWD}/backend
+      dockerfile: Dockerfile
+    image: "trivia/backend"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=true
+      - FLASK_CONFIG=development
+      - DEV_DATABASE_URL=postgresql://udacity:udacity@db:5432/triviaapp
+      - STATIC_PATH=/app/application/static
+    ports:
+      - "60080:80"
+    volumes:
+      # remove the following for production with Dockerfile ADD
+      - ${PWD}/backend/application:/app/application
+      - ${PWD}/backend/data:/app/data
+      - ${PWD}/backend/migrations:/app/migrations
+      - ${PWD}/backend/tests:/app/tests
+      - ${PWD}/backend/config.py:/app/config.py
+      - ${PWD}/backend/app.py:/app/app.py
+      - ${PWD}/backend/requirements.txt:/app/requirements.txt
+      - ${PWD}/backend/uwsgi.ini:/app/uwsgi.ini      
+    depends_on:
+      - db
+      - adminer
+
+  db:
+    image: "postgres"
+    restart: always
+    environment:
+      - POSTGRES_USER=udacity
+      - POSTGRES_PASSWORD=udacity
+      - POSTGRES_DB=fyyurapp
+    volumes:
+      - ${PWD}/volume:/var/lib/postgresql/data
+      - ${PWD}/workspace/psql:/workspace/psql
+
+  adminer:
+    image: "adminer"
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
