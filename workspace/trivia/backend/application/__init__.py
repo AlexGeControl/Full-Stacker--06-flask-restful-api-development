@@ -1,5 +1,6 @@
 from flask import Flask
 
+from flask_cors import CORS
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 
@@ -7,6 +8,7 @@ from config import basedir, config
 import logging
 from .utils import format_datetime, create_file_handler
 
+cors = CORS()
 db = SQLAlchemy()
 moment = Moment()
 
@@ -16,8 +18,11 @@ def create_app(config_name):
     app.config.from_object(config[config_name])    
     config[config_name].init_app(app)    
     
-    # activate extensions:
+    # enable CORS:
+    cors.init_app(app)
+    # enable SQLAlchemy:
     db.init_app(app)
+    # enable moment:
     moment.init_app(app)
 
     # jinja:

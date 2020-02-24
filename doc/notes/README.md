@@ -112,3 +112,139 @@ Below are the common codes. For further details please refer to [HTTP Dogs](http
 * **405** Method Not Allowed
 * **500** Internal Server Error
 
+### Debugging Tools -- cURL
+
+**Curl** is a command line tool that completes IP transfers of data using URLs. One quick way to test your API.
+
+#### Commonly Used Options
+
+* **-X** or --request COMMAND
+* **-d** or --data DATA
+* **-F** or --form CONTENT
+* **-u** or --user USER[:PASSWORD]
+* **-H** or --header LINE
+
+### API Organization
+
+When organizing API endpoints, they should be based on the resources instead of on actions. The request methods will determine what action should be taken at a given URL endpoint. Your entire API's scheme should be consistent, clear and concise. 
+
+#### Should be Intuitive
+
+#### Organize by Resource
+
+* Use nouns in the path, not verbs
+* The method used will determine the operation taken
+
+#### Keep a Consistent Scheme
+
+* Plural nouns for collections
+* Use parameters to specify a specific item
+
+#### Don’t be Too Complex or Lengthy
+
+* No longer than collection/item/collection
+* If the above hierarchy cannot solve the problem, think about re-structuring the application
+
+### CORS
+
+#### Overview
+
+**CORS** stands for cross-origin resource sharing. By default, the web uses **the same-origin policy** that a web application using those APIs can only request resources from **the same origin the application was loaded from**, unless the response from other origins includes the right CORS headers.
+
+Following cases all belong to **cross-origin**:
+
+* Different domains
+* Different subdomains (example.com and api.example.com)
+* Different ports (example.com and example.com:1234)
+* Different protocols (http://example.com and https://example.com)
+
+Modern browsers handle the client side of cross-origin sharing, including headers and policy enforcement. **The CORS standard means for backend developers the server should be able to handle CORS request and response headers**
+
+#### Implementation
+
+When the server receives a request with method OPTIONS, it include the following header options in response to implement CORS policies:
+
+* **Access-Control-Allow-Origin**
+    What client domains can access its resources. For any domain use *
+* **Access-Control-Allow-Credentials**
+    Only if using cookies for authentication - in which case its value must be true
+* **Access-Control-Allow-Methods**
+    List of HTTP request types allowed
+* **Access-Control-Allow-Headers**
+    List of http request header values the server will allow, particularly useful if you use any custom headers
+
+#### Integration with Flask
+
+```python
+# Import Dependencies
+from flask import Flask
+from flask_cors import CORS
+
+def create_app(test_config=None):
+    app = Flask(__name__)
+    # Option 1 -- basic initialization
+    # CORS(app)
+    # Option 2 -- resource specific usage
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+    # CORS Headers 
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+        return response
+    
+    @app.route('/messages')
+    # Option 3 -- route specific usage
+    @cross_origin()
+    def get_messages():
+        return 'GETTING MESSAGES'
+```
+
+### Flask Routes
+
+#### Basic
+
+```python
+@app.route('/hello')
+def get_greeting():
+    return jsonify({'message':'Hello, World!'})
+```
+
+#### Variable Rule
+
+```python
+# Using <converter:variable_name> to specify parameters to be passed from URL to function as arguments
+@app.route('/entrees/<int:entree_id>')
+def retrieve_entree(entree_id):
+    return 'Entree %d' % entree_id
+```
+
+#### HTTP Methods
+
+By default, the @app.route decorator answers only get requests.
+
+```python
+@app.route('/hello', methods=['GET', 'POST'])
+def greeting():
+    if request.method == 'POST':
+        return create_greeting()
+    else:
+        return send_greeting()
+```
+
+OPTIONS requests are automatically implemented and HEAD is also automatically implemented if GET is present.
+
+#### Query Parameters
+
+The below examples show the format of query parameters. When writing query parameters convention dictates that:
+
+* A question mark precedes the query parameters
+* Parameters are in key=value pairs with an equal sign in between the key and value
+* Sets of parameters are separated by an ampersand
+
+```python
+@app.route('/entrees', methods=['GET'])
+  def get_entrees():
+    page = request.args.get('page', 1, type=int)
+```

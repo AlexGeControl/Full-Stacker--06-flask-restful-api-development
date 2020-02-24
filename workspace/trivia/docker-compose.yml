@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  fyyur:
+  trivia:
     build:
       context: ${PWD}/backend
       dockerfile: Dockerfile
@@ -34,10 +34,10 @@ services:
     environment:
       - POSTGRES_USER=udacity
       - POSTGRES_PASSWORD=udacity
-      - POSTGRES_DB=fyyurapp
+      - POSTGRES_DB=triviaapp
     volumes:
       - ${PWD}/volume:/var/lib/postgresql/data
-      - ${PWD}/workspace/psql:/workspace/psql
+      - ${PWD}/backend/data/trivia.psql:/trivia.psql
 
   adminer:
     image: "adminer"
