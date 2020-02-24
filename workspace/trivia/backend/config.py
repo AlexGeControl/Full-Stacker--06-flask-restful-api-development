@@ -8,6 +8,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or os.urandom(32)
     # database:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # pagination:
+    FLASK_QUESTIONS_PER_PAGE = 10
     # mail service:
     """
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')

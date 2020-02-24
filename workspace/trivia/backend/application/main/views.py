@@ -1,10 +1,10 @@
 from flask import jsonify
 
-from . import main
+from . import bp
 
-@main.route('/')
-@main.route('/index')
-@main.route('/home')
+@bp.route('/')
+@bp.route('/index')
+@bp.route('/home')
 def index():
     """ welcome to restful api development!
     """
