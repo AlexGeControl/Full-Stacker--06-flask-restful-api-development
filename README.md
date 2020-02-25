@@ -338,3 +338,68 @@ flask test --coverage=True
 
 <img src="doc/02-coverage-analysis.png" alt="Coverage Analysis"/>
 
+---
+
+## Review
+
+### Code Quality & Documentation
+
+#### Write Clear, Concise and Well Documented Code
+
+I have refactored the project structure following [Miguel Grinberg](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xv-a-better-application-structure)'s recommended best practices
+
+#### Write an Informative README
+
+This README includes instructions for:
+
+* How to get the system up & running
+
+* API endpoints documentation
+
+#### Leverage Environment Controls
+
+Volumes for Docker persistent storage are ignored by the Git
+
+### Handling HTTP Requests
+
+#### Follow RESTful Principles
+
+All RESTful APIs are implemented inside [here](/workspace/trivia/backend/application/api/)
+
+#### Utilize Multiple HTTP Request Methods
+
+* Endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/questions.py#L47)
+
+* Endpoint to handle GET requests for all available categories.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/categories.py#L9)
+
+* Endpoint to DELETE question using a question ID.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/questions.py#L127)
+
+* Endpoint to POST a new question, which will require the question and answer text, category, and difficulty score.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/questions.py#L12)
+
+* Create a GET endpoint to get questions based on category.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/categories.py#L28)
+
+* Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/questions.py#L83)
+
+* Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
+    [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/quizzes.py#L14)
+
+#### Handle Common Errors
+
+All error handlers are registered inside [here](https://github.com/AlexGeControl/Full-Stacker--06-flask-restful-api-development/blob/ed03644bfe497ff4659546c5b6d5711545798794/workspace/trivia/backend/application/api/errors.py#L5)
+
+### API Testing & Documentation
+
+#### Use unittest to Test Flask Application for Expected Behavior
+
+Test cases for all the 7 endpoints are implemented [here](/workspace/trivia/backend/tests)
+
+#### Demonstrate Validity of API Responses
+
+For the three resources, the coverage rates are all above 70%
+
