@@ -1,5 +1,5 @@
 from application import db
-
+import factory
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -47,6 +47,22 @@ class Question(db.Model):
     self.category_id = int(json['category_id']) 
 
 
+class QuestionFactory(factory.alchemy.SQLAlchemyModelFactory):
+    """ test question generator
+    """
+    class Meta:
+        model = Question
+        sqlalchemy_session = db.session
+
+    id = factory.Sequence(lambda n: n)
+
+    question = factory.Sequence(lambda n: "Question {}".format(n))
+    answer = factory.Sequence(lambda n: "Answer {}".format(n))
+    difficulty = factory.Iterator([1, 2, 3, 4, 5], cycle=True)
+
+    category_id = factory.Sequence(lambda n: n)
+
+
 class Category(db.Model):
   """ table questions
   """
@@ -73,3 +89,15 @@ class Category(db.Model):
 
   def from_json(self, json):
     self.type = json['type'] 
+
+
+class CategoryFactory(factory.alchemy.SQLAlchemyModelFactory):
+    """ test category generator
+    """
+    class Meta:
+        model = Category
+        sqlalchemy_session = db.session
+
+    id = factory.Sequence(lambda n: n)
+
+    type = factory.Sequence(lambda n: "Category {}".format(n))

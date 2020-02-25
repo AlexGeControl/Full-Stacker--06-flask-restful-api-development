@@ -7,6 +7,43 @@ from flask import request, abort, jsonify
 from . import bp
 
 
+#  CREATE
+#  ----------------------------------------------------------------
+@bp.route('/questions/', methods=['POST'])
+def create_question():
+    """ create new question using POSTed json
+    """
+    # parse POSTed json:
+    question_created = request.get_json()
+    error = True
+
+    try:
+        question = Question(**question_created)
+        # insert:
+        db.session.add(question)
+        db.session.commit()
+        error = False
+    except:
+        # rollback:
+        db.session.rollback()
+        error = True
+    finally:
+        db.session.close()
+
+    if error:
+        abort(500, description="Failed to create new Question")
+
+    # format:
+    response = jsonify(
+        {
+            "success": True 
+        }
+    )
+    return response, 201
+
+
+#  READ
+#  ----------------------------------------------------------------
 @bp.route('/questions/', methods=['GET'])
 def get_questions():
     """ GET all questions including pagination
@@ -43,40 +80,32 @@ def get_questions():
     )
     return response, 200
 
-
-@bp.route('/questions/', methods=['POST'])
-def create_question():
-    """ create new question using POSTed json
+@bp.route('/questions/search/', methods=['POST'])
+def search_questions():
+    """ GET all questions with the search term in question body
     """
-    # parse POSTed json:
-    question_created = request.get_json()
-    print(question_created)
-    error = True
+    # parse keyword:
+    search_term = request.get_json().get("searchTerm", None)
 
-    try:
-        question = Question(**question_created)
-        # insert:
-        db.session.add(question)
-        db.session.commit()
-        error = False
-    except:
-        # rollback:
-        db.session.rollback()
-        error = True
-    finally:
-        db.session.close()
+    if search_term is None:
+        abort(400, description="'searchTerm' not found".format())
 
-    if error:
-        abort(500, description="Failed to create new Question")
+    # select questions:
+    questions = Question.query.filter(
+        Question.question.contains(search_term)
+    ).all()
 
     # format:
     response = jsonify(
         {
-            "success": True 
+            "questions": [question.to_json() for question in questions],
+            "total_questions": len(questions),
+            # TODO: implement current_category
+            "current_category": None
         }
     )
-    return response, 201
 
+    return response, 200
 
 @bp.route('/questions/<int:id>', methods=['GET'])
 def get_question(id):
@@ -93,7 +122,8 @@ def get_question(id):
     response = jsonify(question.to_json())
     return response, 200
 
-
+#  DELETE
+#  ----------------------------------------------------------------
 @bp.route('/questions/<int:id>', methods=['DELETE'])
 def delete_question(id):
     """ DELETE question

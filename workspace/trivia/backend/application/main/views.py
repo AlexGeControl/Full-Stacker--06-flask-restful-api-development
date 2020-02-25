@@ -8,4 +8,8 @@ from . import bp
 def index():
     """ welcome to restful api development!
     """
-    return jsonify({'message':'Hello, RESTful API development!'})
+    response = jsonify(
+        {'message':'Hello, RESTful API development!'}
+    )
+
+    return response, 200

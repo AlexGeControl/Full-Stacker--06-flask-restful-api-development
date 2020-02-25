@@ -30,3 +30,19 @@ class SetupTestCase(unittest.TestCase):
         """ testing config should be used
         """
         self.assertTrue(current_app.config['TESTING'])
+
+    def test_db_connection(self):
+        """ db connection specification should be docker-compose default
+        """
+        self.assertTrue(
+            current_app.config['SQLALCHEMY_DATABASE_URI'], 
+            'postgresql://udacity:udacity@db:5432/triviaapp'
+        )
+
+    def test_questions_per_page(self):
+        """ questions per page should be udacity default
+        """
+        self.assertTrue(
+            current_app.config['FLASK_QUESTIONS_PER_PAGE'], 
+            10
+        )
