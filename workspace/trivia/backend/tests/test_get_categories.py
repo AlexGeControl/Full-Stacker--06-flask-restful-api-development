@@ -50,9 +50,10 @@ class GetCategoriesTestCase(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         # parse json response:
-        categories = json.loads(
+        json_response = json.loads(
             response.get_data(as_text=True)
         )
+        categories = json_response["categories"]
         # check total number of categories:
         self.assertEqual(len(categories), 20)
         # check category ids:

@@ -20,7 +20,7 @@ def get_categories():
 
     # format:
     response = jsonify(
-        categories
+        {"categories": categories}
     )
     
     return response, 200

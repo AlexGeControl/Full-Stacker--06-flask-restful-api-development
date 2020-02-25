@@ -26,7 +26,7 @@ def get_quizzes():
     
     # extract questions:
     questions = []
-    if quiz_category is None:
+    if quiz_category is None or quiz_category["id"] == 0:
         questions = Question.query.filter(
             Question.id.notin_(previous_questions) 
         ).all()

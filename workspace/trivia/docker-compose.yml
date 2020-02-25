@@ -1,7 +1,27 @@
 version: '3.4'
 
 services:
-  trivia:
+  frontend:
+    build:
+      context: ${PWD}/frontend
+      dockerfile: Dockerfile
+    image: "trivia/frontend"
+    # switch to root if global installation is needed:
+    user: "root"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ${PWD}/frontend/public:/home/node/app/public
+      - ${PWD}/frontend/src:/home/node/app/src
+    ports:
+        - "3000:3000"
+    command: "npm start"
+    depends_on:
+      - db
+      - adminer
+      - backend
+
+  backend:
     build:
       context: ${PWD}/backend
       dockerfile: Dockerfile
