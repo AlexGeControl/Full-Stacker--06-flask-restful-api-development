@@ -8,7 +8,7 @@ from application import create_app, db
 from application.models import Category, CategoryFactory, Question, QuestionFactory
 
 
-class DeleteQuestionTestCase(unittest.TestCase):
+class GetQuestionTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app('testing')
         # activate app context:
@@ -18,8 +18,6 @@ class DeleteQuestionTestCase(unittest.TestCase):
         db.create_all()
         # create client:
         self.client = self.app.test_client(use_cookies=True)
-        # generate data:
-        DeleteQuestionTestCase.generate_data(1)
 
     @staticmethod
     def generate_data(num):
@@ -42,32 +40,17 @@ class DeleteQuestionTestCase(unittest.TestCase):
         # deactivate app context:
         self.app_context.pop()
 
-    def test_delete_existing_question(self):
-        """ response should be success = True for deletion of existing question
+    def test_get_question_with_invalid_id(self):
+        """ response should be success = False for getting non-existing question
         """
         # send request:
-        response = self.client.delete(
-            url_for('api.delete_question', id = 0)
-        )      
+        response = self.client.get(
+            url_for('api.get_question', id = 999), 
+            content_type='application/json'
+        )        
         
-        self.assertEqual(response.status_code, 200)
-
-        # parse json response:
-        json_response = json.loads(
-            response.get_data(as_text=True)
-        )
-        # check response:
-        self.assertEqual(json_response["success"], True)
-
-    def test_delete_non_existing_question(self):
-        """ response should be success = False for deletion of non-existing question
-        """
-        # send request:
-        response = self.client.delete(
-            url_for('api.delete_question', id = 999)
-        )      
-        
-        self.assertEqual(response.status_code, 500)
+        # check status code:
+        self.assertEqual(response.status_code, 404)
 
         # parse json response:
         json_response = json.loads(
@@ -75,5 +58,33 @@ class DeleteQuestionTestCase(unittest.TestCase):
         )
         # check response:
         self.assertEqual(json_response["success"], False)
-        self.assertEqual(json_response["error"], 500)
-        self.assertEqual(json_response["message"], "500 Internal Server Error: Failed to delete Question with id=999")
+        self.assertEqual(json_response["error"], 404)
+        self.assertEqual(json_response["message"], "404 Not Found: Question with id=999 not found")
+
+    def test_get_question_with_valid_id(self):
+        """ response should be question with given id
+        """
+        # create data:
+        category = CategoryFactory()            
+        db.session.add(category)
+        db.session.commit()
+        question = QuestionFactory()
+        db.session.add(question)
+        db.session.commit()
+
+        # send request:
+        response = self.client.get(
+            url_for('api.get_question', id = question.id), 
+            content_type='application/json'
+        )        
+        
+        # check status code:
+        self.assertEqual(response.status_code, 200)
+
+        # parse json response:
+        json_response = json.loads(
+            response.get_data(as_text=True)
+        )
+
+        # check response:
+        self.assertEqual(json_response["id"], question.id)

@@ -27,6 +27,28 @@ class SearchQuestionsTestCase(unittest.TestCase):
         # deactivate app context:
         self.app_context.pop()
 
+    def test_get_quizzes_without_search_term(self):
+        """ response should be success = False for POSTed invalid JSON
+        """
+        response = self.client.post(
+            url_for('api.search_questions'),
+            content_type='application/json',
+            data = json.dumps(
+                {}
+            )
+        )
+        
+        # check status code:
+        self.assertEqual(response.status_code, 400)
+
+        # parse json response:
+        json_response = json.loads(
+            response.get_data(as_text=True)
+        )
+        self.assertEqual(json_response["success"], False)
+        self.assertEqual(json_response["error"], 400)
+        self.assertEqual(json_response["message"], "400 Bad Request: 'searchTerm' not found")
+
     def test_search_questions(self):
         """ response should be questions with search term in question body
         """

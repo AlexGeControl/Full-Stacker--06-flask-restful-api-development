@@ -27,6 +27,27 @@ class GetQuestionsByCategoryTestCase(unittest.TestCase):
         # deactivate app context:
         self.app_context.pop()
 
+    def test_get_questions_with_invalid_category_id(self):
+        """ response should be success = False for getting non-existing category
+        """
+        # send request:
+        response = self.client.get(
+            url_for('api.get_questions_by_category', id = 999), 
+            content_type='application/json'
+        )        
+        
+        # check status code:
+        self.assertEqual(response.status_code, 404)
+
+        # parse json response:
+        json_response = json.loads(
+            response.get_data(as_text=True)
+        )
+        # check response:
+        self.assertEqual(json_response["success"], False)
+        self.assertEqual(json_response["error"], 404)
+        self.assertEqual(json_response["message"], "404 Not Found: Category with id=999 not found")
+
     def test_get_questions_by_category(self):
         """ response should be questions which belongs to the given category
         """

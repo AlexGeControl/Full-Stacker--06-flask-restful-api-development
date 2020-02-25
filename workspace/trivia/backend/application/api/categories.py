@@ -1,7 +1,7 @@
 from application import db
 from application.models import Question, Category
 
-from flask import jsonify
+from flask import abort, jsonify
 
 from . import bp
 
